@@ -1,21 +1,30 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:petaldash/src/models/User.dart';
+import 'package:petaldash/src/models/user.dart';
+import 'package:petaldash/src/models/response_api.dart';
+import 'package:petaldash/src/pages/client/profile/info/client_profile_info_controller.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
+import 'package:petaldash/src/providers/users_provider.dart';
+
+
 
 class ClientProfileUpdateController extends GetxController{
 
+  UsersProvider usersProvider = UsersProvider();
   User user = User.fromJson(GetStorage().read('user'));
+  ClientProfileInfoController clientProfileInfoController = Get.find();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController lastnameController= TextEditingController();
   TextEditingController phoneController = TextEditingController();
 
   ImagePicker picker = ImagePicker();
-  File? imagefile;
+  File? imageFile;
+
 
   ClientProfileUpdateController(){
     nameController.text = user.name ?? '';
@@ -27,12 +36,9 @@ class ClientProfileUpdateController extends GetxController{
     String lasName = lastnameController.text;
     String phone = phoneController.text;
 
-
-
     //Get.snackbar('Email', email);
     //Get.snackbar('Password', password);
-    if(isValidForm(name, lasName, phone)){
-
+    if(isValidForm(name, lasName, phone)) {
       ProgressDialog progressDialog = ProgressDialog(context: context);
       progressDialog.show(max: 100, msg: 'Actualizando datos...');
 
@@ -41,7 +47,35 @@ class ClientProfileUpdateController extends GetxController{
         name: name,
         lastname: lasName,
         phone: phone,
+        sessionToken: user.sessionToken
       );
+
+      if (imageFile == null) {
+        ResponseApi responseApi = await usersProvider.update(myUser);
+        print('Response Api Update: ${responseApi.data}');
+        progressDialog.close();
+        if (responseApi.success == true) {
+          GetStorage().write('user', responseApi.data);
+          clientProfileInfoController.user.value = User.fromJson(GetStorage().read('user'));
+          print('Response Api Update: ${responseApi.data}');
+        }
+      }else{
+        Stream stream = await usersProvider.updateWithImage(myUser, imageFile!);
+        stream.listen((res) {
+          progressDialog.close();
+          ResponseApi responseApi = ResponseApi.fromJson(json.decode(res));
+          Get.snackbar('Proceso terminado', responseApi.message ?? '');
+          print('Response Api Update: ${responseApi.data}');
+
+          if(responseApi.success== true){
+            GetStorage().write('user', responseApi.data);
+            clientProfileInfoController.user.value = User.fromJson(GetStorage().read('user'));
+          }else{
+            Get.snackbar('Registro fallido', responseApi.message ?? '');
+          }
+
+        });
+      }
 
       /*Stream stream = await userProvider.createWithImage(user, imagefile!);
       stream.listen((res) {
@@ -80,7 +114,7 @@ class ClientProfileUpdateController extends GetxController{
   Future selectImage(ImageSource imageSource) async{
     XFile? image = await picker.pickImage(source: imageSource);
     if(image != null){
-      imagefile = File (image.path);
+      imageFile = File (image.path);
       update();
     }
   }

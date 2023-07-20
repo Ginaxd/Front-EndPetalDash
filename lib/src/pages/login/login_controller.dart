@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:petaldash/src/models/response_api.dart';
 import 'package:petaldash/src/models/user.dart';
-import 'package:petaldash/src/providers/user_providers.dart';
+import 'package:petaldash/src/providers/users_provider.dart';
 
 class LoginController extends GetxController {
 
@@ -12,7 +12,7 @@ class LoginController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  UserProvider usersProvider = UserProvider();
+  UsersProvider usersProvider = UsersProvider();
 
   void goToRegisterPage() {
     Get.toNamed('/register');

@@ -1,11 +1,11 @@
 
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:petaldash/src/models/User.dart';
+import 'package:petaldash/src/models/user.dart';
 
 class ClientProfileInfoController extends GetxController{
 
-  User user = User.fromJson(GetStorage().read('user'));
+  var user = User.fromJson(GetStorage().read('user')?? {}).obs;
 
   void singnOut(){
     GetStorage().remove('user');

@@ -7,7 +7,7 @@ import 'package:petaldash/src/environment/environment.dart';
 import 'package:petaldash/src/models/user.dart';
 import'package:http/http.dart' as http;
 
-class UserProvider extends GetConnect{
+class UsersProvider extends GetConnect{
   String url = Environment.API_URL + 'api/users';
 
   Future<Response> create(User user) async {
@@ -19,7 +19,10 @@ class UserProvider extends GetConnect{
 
   //// actulizando datos  sin imagen
   Future<ResponseApi> update(User user) async {
-    Response response = await put('$url/updateWithuotImage', user.toJson(), headers: {
+    Response response = await put(
+        '$url/updateWithuotImage',
+        user.toJson(),
+        headers: {
       'Content-Type': 'application/json'
     }); //Espera hasta que el servidor nos retorne la respuesta
     if(response.body == null){
@@ -43,7 +46,7 @@ class UserProvider extends GetConnect{
     final response = await request.send();
     return response.stream.transform(utf8.decoder);
   }
-/// actualizar datos con imagen
+  // actualizar datos con imagen
   Future <Stream> updateWithImage(User user, File image)async {
     Uri uri = Uri.http( Environment.API_URL_OLD,'/api/users/update');
     final request = http.MultipartRequest('POST', uri);

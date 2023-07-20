@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:petaldash/src/models/response_api.dart';
-import 'package:petaldash/src/providers/user_providers.dart';
+import 'package:petaldash/src/providers/users_provider.dart';
 import 'package:petaldash/src/models/user.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 
@@ -19,9 +19,9 @@ class RegisterController extends GetxController{
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
-  UserProvider userProvider = UserProvider();
+  UsersProvider usersProvider = UsersProvider();
   ImagePicker picker = ImagePicker();
-  File? imagefile;
+  File? imageFile;
 
 
   void goToRegisterPage(){
@@ -57,7 +57,7 @@ class RegisterController extends GetxController{
         sessionToken:null,
       );
 
-      Stream stream = await userProvider.createWithImage(user, imagefile!);
+      Stream stream = await usersProvider.createWithImage(user, imageFile!);
       stream.listen((res) {
         progressDialog.close();
         ResponseApi responseApi = ResponseApi.fromJson(json.decode(res));
@@ -114,7 +114,7 @@ class RegisterController extends GetxController{
 
     }
 
-    if(imagefile==null){
+    if(imageFile==null){
       Get.snackbar('Formulario no valido', 'Debes seleccionar una imagen de perfil');
       return false;
     }
@@ -126,7 +126,7 @@ class RegisterController extends GetxController{
   Future selectImage(ImageSource imageSource) async{
     XFile? image = await picker.pickImage(source: imageSource);
     if(image != null){
-      imagefile = File (image.path);
+      imageFile = File (image.path);
       update();
     }
   }

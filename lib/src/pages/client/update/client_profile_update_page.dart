@@ -137,8 +137,8 @@ class ClientProfileUpdatePage extends StatelessWidget {
             onTap: () => con.showAlertDialog(context),
             child: GetBuilder<ClientProfileUpdateController> (
               builder: (value) => CircleAvatar(
-                backgroundImage: con.imagefile!= null
-                    ? FileImage(con.imagefile!)
+                backgroundImage: con.imageFile!= null
+                    ? FileImage(con.imageFile!)
                     : con.user.image !=null
                     ? NetworkImage(con.user.image!)
                 :AssetImage('assets/img/user.png') as ImageProvider,

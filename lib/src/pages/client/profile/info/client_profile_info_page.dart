@@ -8,7 +8,7 @@ class ClientProfileInfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: Obx(() => Stack(
         //Posicionar elementos uno encima de otro
         children: [
           _backgroundCover(context),
@@ -16,7 +16,7 @@ class ClientProfileInfoPage extends StatelessWidget {
           _imageUser(context),
           _buttonSingOut()
         ],
-      ),
+      )),
     );
   }
 
@@ -63,7 +63,7 @@ class ClientProfileInfoPage extends StatelessWidget {
         margin: EdgeInsets.only(top: 40, bottom: 15),
         child: ListTile (
           leading: Icon(Icons.person),
-          title: Text('${con.user.name ?? ''} ${con.user.lastname ?? ''} '),
+          title: Text('${con.user.value.name ?? ''} ${con.user.value.lastname ?? ''} '),
           subtitle: Text('Nombre de usuario'),
         ),);
   }
@@ -73,7 +73,7 @@ class ClientProfileInfoPage extends StatelessWidget {
         margin: EdgeInsets.only(top: 10),
         child: ListTile (
           leading: Icon(Icons.email),
-          title: Text(con.user.email ?? ''),
+          title: Text(con.user.value.email ?? ''),
           subtitle: Text('Email'),
     ),
     );
@@ -83,7 +83,7 @@ class ClientProfileInfoPage extends StatelessWidget {
       margin: EdgeInsets.only(top: 10),
       child: ListTile (
         leading: Icon(Icons.phone),
-        title: Text(con.user.phone ?? ''),
+        title: Text(con.user.value.phone ?? ''),
         subtitle: Text('Telefono'),
       ),
     );
@@ -110,8 +110,8 @@ class ClientProfileInfoPage extends StatelessWidget {
         alignment: Alignment.topCenter,
         margin: EdgeInsets.only(top: 40),
         child: CircleAvatar(
-          backgroundImage: con.user.image!= null
-              ? NetworkImage(con.user.image!)
+          backgroundImage: con.user.value.image!= null
+              ? NetworkImage(con.user.value.image!)
               : AssetImage('assets/img/user.png') as ImageProvider,
           radius: 60,
           backgroundColor: Color(0xFFBB85B4),

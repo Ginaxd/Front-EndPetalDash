@@ -174,8 +174,8 @@ class RegisterPage extends StatelessWidget {
           onTap: () => con.showAlertDialog(context),
           child: GetBuilder<RegisterController> (
             builder: (value) => CircleAvatar(
-              backgroundImage: con.imagefile!= null
-                  ? FileImage(con.imagefile!)
+              backgroundImage: con.imageFile!= null
+                  ? FileImage(con.imageFile!)
                   : AssetImage('assets/img/user.png') as ImageProvider,
               radius: 60,
               backgroundColor: Color(0xFFBB85B4),
