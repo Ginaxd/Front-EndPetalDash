@@ -40,6 +40,13 @@ dependencies:
   http: ^1.1.0
   sn_progress_dialog: ^1.0.0-nullsafety.0
   image_picker: ^1.0.1
+  modal_bottom_sheet: ^3.0.0-pre
+  flutter_image_slideshow: ^0.1.6
+  fluttertoast: ^8.2.2
+  google_maps_flutter: ^2.3.1
+  geolocator: ^9.0.2
+  geocoding: ^2.0.4
+  #location: ^4.2.0
 
 dev_dependencies:
   flutter_test:
