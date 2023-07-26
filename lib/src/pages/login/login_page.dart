@@ -118,7 +118,8 @@ class LoginPage extends StatelessWidget {
             _textYourInfo(),
             _textFieldEmail(),
             _textFieldPassword(),
-            _buttonLogin()
+            _buttonLogin(),
+            _buttonLoginGoogle()
           ],
         ),
       ),
@@ -177,6 +178,42 @@ class LoginPage extends StatelessWidget {
               color: Colors.black
           ),
           )
+      ),
+    );
+  }
+
+  Widget _buttonLoginGoogle() {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+      child: ElevatedButton(
+        onPressed: () => con.login(),
+        style: ElevatedButton.styleFrom(
+          primary: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 13),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25.0),
+          ),
+          side: BorderSide(color: Colors.grey, width: 1.5),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/img/google.png',
+              height: 25,
+              width: 25,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'LOGIN WITH GOOGLE',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
