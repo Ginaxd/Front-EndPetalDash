@@ -10,8 +10,14 @@ import 'package:location/location.dart' as location;
 import 'package:petaldash/src/environment/environment.dart';
 import 'package:petaldash/src/models/order.dart';
 import 'package:petaldash/src/providers/orders_provider.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 class DeliveryOrdersMapController extends GetxController {
+
+  Socket socket = io('${Environment.API_URL}orders/delivery', <String, dynamic> {
+    'transports': ['websocket'],
+    'autoConnect': false
+  });
 
   OrdersProvider ordersProvider =OrdersProvider();
   Order order = Order.fromJson(Get.arguments['order'] ?? {});
@@ -36,6 +42,7 @@ class DeliveryOrdersMapController extends GetxController {
   DeliveryOrdersMapController() {
     print('Order: ${order.toJson()}');
     checkGPS(); // VERIFICAR SI EL GPS ESTA ACTIVO
+    connectAndListen();
   }
 
   Future setLocationDraggableInfo() async {
@@ -55,6 +62,13 @@ class DeliveryOrdersMapController extends GetxController {
       print(
           'LAT Y LNG: ${addressLatLng?.latitude ?? 0} ${addressLatLng?.longitude ?? 0}');
     }
+  }
+
+  void connectAndListen() {
+    socket.connect();
+    socket.onConnect((data) {
+      print('ESTE DISPISITIVO SE CONECTO A SOCKET IO');
+    });
   }
 
   void selectRefPoint(BuildContext context) {
@@ -239,7 +253,7 @@ class DeliveryOrdersMapController extends GetxController {
   void onClose() {
     // TODO: implement onClose
     super.onClose();
-    //socket.disconnect();
+    socket.disconnect();
     positionSubscribe?.cancel();
   }
 
