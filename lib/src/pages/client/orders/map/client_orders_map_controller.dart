@@ -58,7 +58,7 @@ class ClientOrdersMapController extends GetxController {
       print('ESTE DISPISITIVO SE CONECTO A SOCKET IO');
     });
     listenPosition();
-    //listenToDelivered();
+    listenToDelivered();
   }
 
   void listenPosition() {
@@ -76,15 +76,15 @@ class ClientOrdersMapController extends GetxController {
     });
   }
 
-  // void listenToDelivered() {
-  //   socket.on('delivered/${order.id}', (data) {
-  //     Fluttertoast.showToast(
-  //         msg: 'El estado de la orden se actualizo a entregado',
-  //         toastLength: Toast.LENGTH_LONG
-  //     );
-  //     Get.offNamedUntil('/client/home', (route) => false);
-  //   });
-  // }
+  void listenToDelivered() {
+    socket.on('delivered/${order.id}', (data) {
+      Fluttertoast.showToast(
+          msg: 'El estado de la orden se actualizo a entregado',
+          toastLength: Toast.LENGTH_LONG
+      );
+      Get.offNamedUntil('/client/home', (route) => false);
+    });
+  }
 
   Future setLocationDraggableInfo() async {
 
@@ -223,6 +223,7 @@ class ClientOrdersMapController extends GetxController {
       print('Error: ${e}');
     }
   }
+
 
   void callNumber() async{
     String number = order.delivery?.phone ?? ''; //set the number here
