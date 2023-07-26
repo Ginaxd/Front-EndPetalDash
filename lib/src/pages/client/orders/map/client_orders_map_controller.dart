@@ -13,13 +13,14 @@ import 'package:location/location.dart' as location;
 import 'package:petaldash/src/environment/environment.dart';
 import 'package:petaldash/src/models/order.dart';
 import 'package:petaldash/src/providers/orders_provider.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 class ClientOrdersMapController extends GetxController {
 
-  // Socket socket = io('${Environment.API_URL}orders/delivery', <String, dynamic> {
-  //   'transports': ['websocket'],
-  //   'autoConnect': false
-  // });
+  Socket socket = io('${Environment.API_URL}orders/delivery', <String, dynamic> {
+    'transports': ['websocket'],
+    'autoConnect': false
+  });
 
   Order order = Order.fromJson(Get.arguments['order'] ?? {});
   OrdersProvider ordersProvider = OrdersProvider();
@@ -48,32 +49,32 @@ class ClientOrdersMapController extends GetxController {
     print('Order: ${order.toJson()}');
 
     checkGPS(); // VERIFICAR SI EL GPS ESTA ACTIVO
-    //connectAndListen();
+    connectAndListen();
   }
 
-  // void connectAndListen() {
-  //   socket.connect();
-  //   socket.onConnect((data) {
-  //     print('ESTE DISPISITIVO SE CONECTO A SOCKET IO');
-  //   });
-  //   listenPosition();
-  //   listenToDelivered();
-  // }
+  void connectAndListen() {
+    socket.connect();
+    socket.onConnect((data) {
+      print('ESTE DISPISITIVO SE CONECTO A SOCKET IO');
+    });
+    listenPosition();
+    //listenToDelivered();
+  }
 
-  // void listenPosition() {
-  //   socket.on('position/${order.id}', (data) {
-  //
-  //     addMarker(
-  //         'delivery',
-  //         data['lat'],
-  //         data['lng'],
-  //         'Tu repartidor',
-  //         '',
-  //         deliveryMarker!
-  //     );
-  //
-  //   });
-  // }
+  void listenPosition() {
+    socket.on('position/${order.id}', (data) {
+
+      addMarker(
+          'delivery',
+          data['lat'],
+          data['lng'],
+          'Tu repartidor',
+          '',
+          deliveryMarker!
+      );
+
+    });
+  }
 
   // void listenToDelivered() {
   //   socket.on('delivered/${order.id}', (data) {
@@ -282,7 +283,7 @@ class ClientOrdersMapController extends GetxController {
   void onClose() {
     // TODO: implement onClose
     super.onClose();
-    //socket.disconnect();
+    socket.disconnect();
     positionSubscribe?.cancel();
   }
 }

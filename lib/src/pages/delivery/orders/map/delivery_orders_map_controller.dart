@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as location;
 import 'package:petaldash/src/environment/environment.dart';
 import 'package:petaldash/src/models/order.dart';
+import 'package:petaldash/src/models/response_api.dart';
 import 'package:petaldash/src/providers/orders_provider.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -39,10 +41,34 @@ class DeliveryOrdersMapController extends GetxController {
   Set<Polyline> polylines = <Polyline>{}.obs;
   List<LatLng> points = [];
 
+  double distanceBetween = 0.0;
+  bool isClose = false;
+
   DeliveryOrdersMapController() {
     print('Order: ${order.toJson()}');
     checkGPS(); // VERIFICAR SI EL GPS ESTA ACTIVO
     connectAndListen();
+  }
+
+  void isCloseToDeliveryPosition() {
+
+    if (position != null) {
+      distanceBetween = Geolocator.distanceBetween(
+          position!.latitude,
+          position!.longitude,
+          order.address!.lat!,
+          order.address!.lng!
+      );
+
+      print('distanceBetween ${distanceBetween}');
+
+      if (distanceBetween <= 200 && isClose == false) {
+        isClose = true;
+        update();
+      }
+
+    }
+
   }
 
   Future setLocationDraggableInfo() async {
@@ -71,16 +97,17 @@ class DeliveryOrdersMapController extends GetxController {
     });
   }
 
-  void selectRefPoint(BuildContext context) {
-    if (addressLatLng != null) {
-      Map<String, dynamic> data = {
-        'address': addressName.value,
-        'lat': addressLatLng!.latitude,
-        'lng': addressLatLng!.longitude,
-      };
-      Navigator.pop(context, data);
+  void emitPosition() {
+    if (position != null) {
+      socket.emit('position', {
+        'id_order': order.id,
+        'lat': position!.latitude,
+        'lng': position!.longitude,
+      });
     }
   }
+
+
 
   void checkGPS() async {
     deliveryMarker = await createMarkerFromAssets('assets/img/delivery_little.png');
@@ -121,7 +148,19 @@ class DeliveryOrdersMapController extends GetxController {
     update();
   }
 
-
+  void updateToDelivered() async {
+    if (distanceBetween <= 200) {
+      ResponseApi responseApi = await ordersProvider.updateToDelivered(order);
+      Fluttertoast.showToast(msg: responseApi.message ?? '', toastLength: Toast.LENGTH_LONG);
+      if (responseApi.success == true) {
+        //emitToDelivered();
+        Get.offNamedUntil('/delivery/home', (route) => false);
+      }
+    }
+    else {
+      Get.snackbar('Operacion no permitida', 'Debes estar mas cerca a la posicion de entrega del pedidio');
+    }
+  }
 
   void updateLocation() async {
     try{
@@ -171,8 +210,8 @@ class DeliveryOrdersMapController extends GetxController {
             deliveryMarker!
         );
         animateCameraPosition(position?.latitude ?? 17.065278, position?.longitude ?? -96.7244856);
-        //emitPosition();
-        //isCloseToDeliveryPosition();
+        emitPosition();
+        isCloseToDeliveryPosition();
       });
 
     } catch(e) {
