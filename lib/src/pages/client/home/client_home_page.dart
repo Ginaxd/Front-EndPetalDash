@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:petaldash/src/pages/client/home/client_home_controller.dart';
+import 'package:petaldash/src/pages/client/orders/list/client_orders_list_page.dart';
 import 'package:petaldash/src/pages/client/products/list/client_products_list_controller.dart';
 import 'package:petaldash/src/pages/client/products/list/client_products_list_page.dart';
 import 'package:petaldash/src/pages/client/profile/info/client_profile_info_page.dart';
@@ -23,7 +24,7 @@ class ClientHomePage extends StatelessWidget {
         index: con.indexTab.value,
         children: [
           ClientProductsListPage(),
-          DeliveryOrdersListPage(),
+          ClientOrdersListPage(),
           ClientProfileInfoPage()
         ],
       )
