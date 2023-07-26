@@ -185,9 +185,9 @@ class DeliveryOrdersMapPage extends StatelessWidget {
   Widget _buttonAccept(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(left: 40, right: 40),
+      margin: EdgeInsets.only(left: 30, right: 30),
       child: ElevatedButton(
-       onPressed: () => con.selectRefPoint(context),
+        onPressed: con.isClose == true ? () => con.updateToDelivered() : null,
         child: Text(
           'ENTREGAR PEDIDO',
           style: TextStyle(
@@ -195,9 +195,8 @@ class DeliveryOrdersMapPage extends StatelessWidget {
           ),
         ),
         style: ElevatedButton.styleFrom(
-            primary: Color(0xF5DEDEDE),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20)
+                borderRadius: BorderRadius.circular(15)
             ),
             padding: EdgeInsets.all(15)
         ),
