@@ -107,6 +107,12 @@ class DeliveryOrdersMapController extends GetxController {
     }
   }
 
+  void emitToDelivered() {
+    socket.emit('delivered', {
+      'id_order': order.id,
+    });
+  }
+
 
 
   void checkGPS() async {
@@ -153,7 +159,7 @@ class DeliveryOrdersMapController extends GetxController {
       ResponseApi responseApi = await ordersProvider.updateToDelivered(order);
       Fluttertoast.showToast(msg: responseApi.message ?? '', toastLength: Toast.LENGTH_LONG);
       if (responseApi.success == true) {
-        //emitToDelivered();
+        emitToDelivered();
         Get.offNamedUntil('/delivery/home', (route) => false);
       }
     }
